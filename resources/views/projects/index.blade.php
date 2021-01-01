@@ -1,25 +1,17 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Projects') }}
-        </h2>
-    </x-slot>
+    <div class="flex items-center my-3">
+        <a href="/projects/create">New Project</a>
+    </div>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <ul>
-                        @forelse ($projects as $project)
-                            <li>
-                                <a href="{{ $project->path() }}">{{ $project->title }}</a>
-                            </li>
-                        @empty
-                            <li>No projects yet.</li>
-                        @endforelse
-                    </ul>
-                </div>
+    <div class="flex">
+        @forelse ($projects as $project)
+            <div class="bg-white mr-4 p-5 rounded shadow w-1/3" style="height: 200px;">
+                <h3 class="font-normal text-xl py-4">{{ $project->title }}</h3>
+
+                <div class="text-gray-400">{{ Illuminate\Support\Str::limit($project->description, 300) }}</div>
             </div>
-        </div>
+        @empty
+            <div>No projects yet.</div>
+        @endforelse
     </div>
 </x-app-layout>
