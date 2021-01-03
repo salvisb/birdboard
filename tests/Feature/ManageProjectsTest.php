@@ -12,27 +12,15 @@ class ManageProjectsTest extends TestCase
     use WithFaker, RefreshDatabase;
 
     /** @test */
-    public function guests_cannot_create_projects()
-    {
-        $attributes = Project::factory()->raw();
-
-        $this->get('/projects/create')->assertRedirect('login');
-
-        $this->post('/projects', $attributes)->assertRedirect('login');
-    }
-
-    /** @test */
-    public function guests_cannot_view_projects()
-    {
-        $this->get('/projects')->assertRedirect('login');
-    }
-
-    /** @test */
-    public function guests_cannot_view_a_single_project()
+    public function guests_cannot_manage_projects()
     {
         $project = Project::factory()->create();
 
+        $this->get('/projects')->assertRedirect('login');
         $this->get($project->path())->assertRedirect('login');
+        $this->get($project->path() . '/edit')->assertRedirect('login');
+        $this->get('/projects/create')->assertRedirect('login');
+        $this->post('/projects', $project->toArray())->assertRedirect('login');
     }
 
     /** @test */
@@ -69,11 +57,18 @@ class ManageProjectsTest extends TestCase
 
         $project = Project::factory()->create(['owner_id' => auth()->user()->id]);
 
-        $this->patch($project->path(), [
-            'notes' => 'Changed'
-        ])->assertRedirect($project->path());
+        $attributes = [
+            'title' => $this->faker->sentence,
+            'description' => $this->faker->sentence,
+            'notes' => $this->faker->sentence,
+        ];
 
-        $this->assertDatabaseHas('projects', ['notes' => 'Changed']);
+        $this->get($project->path() . '/edit')->assertOk();
+
+        $this->patch($project->path(), $attributes)
+            ->assertRedirect($project->path());
+
+        $this->assertDatabaseHas('projects', $attributes);
     }
 
     /** @test */

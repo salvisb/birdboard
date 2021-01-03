@@ -27,10 +27,19 @@
     </div>
 </div>
 
-<div class="field">
+<div class="field mb-6">
     <div class="control">
         <button type="submit" class="button is-link mr-2">{{ $buttonText }}</button>
 
         <a href="{{ $project->path() }}" class="text-default">Cancel</a>
     </div>
 </div>
+
+
+@if ($errors->any())
+    <div class="field">
+        @foreach ($errors->all() as $error)
+            <li class="text-sm text-red-500">{{ $error }}</li>
+        @endforeach
+    </div>
+@endif
